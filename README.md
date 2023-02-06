@@ -1,7 +1,7 @@
 <p align="center">
     <img
       alt="rshellz"
-      src="https://github.com/Brsalcedom/rshellz/blob/master/assets/banner.png"
+      src="https://github.com/Brsalcedom/rshellz/blob/main/assets/banner.png"
       width="640"
     />
 </p>
