@@ -35,7 +35,7 @@ The basic usage requires a shell type `-t`, local ip address `-i` and local port
 
 ```
 	-h		: Show this help panel
-	-t SHELL	: Type of shell: [bash, python, perl, php, netcat, ruby, java]
+	-t SHELL	: Type of shell
 	-i IP		: Specify ip address
 	-p PORT		: Specify port
 	-e		: Base64 encode
