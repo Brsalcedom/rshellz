@@ -29,17 +29,19 @@ sudo curl -s https://raw.githubusercontent.com/Brsalcedom/rshellz/main/rshellz -
 
 The basic usage requires a shell type `-t`, local ip address `-i` and local port `-p`.
 
-![Help Panel](assets/helppanel.png)
+Example: `rshellz -t bash -i 10.0.0.1 -p 443`.
+
+![Basic Usage](assets/basic-usage.png)
   
 ### Options
 
 ```
-	-h		: Show this help panel
-	-t SHELL	: Type of shell
-	-i IP		: Specify ip address
-	-p PORT		: Specify port
-	-e		: Base64 encode
-	-q		: Hide banner
+-h		: Show the help panel
+-t SHELL	: Type of shell
+-i IP		: Local ip address
+-p PORT		: Local port
+-e		: Base64 encode
+-q		: Hide banner
 ```
 ### Shells  
 
@@ -52,10 +54,6 @@ The following shell types are supported.
 - netcat
 - java
 - xterm
-
-Example: `rshellz -t bash -i 10.0.0.1 -p 443`.
-
-![Basic Usage](assets/basic-usage.png)
 
 ### Encoding
   
