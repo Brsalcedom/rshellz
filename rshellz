@@ -14,7 +14,7 @@ grayC="\e[0;37m\033[1m"
 script_name=$(basename $0)
 	
 if [ ! "$(command -v xclip)" ]; then
-  echo -e "${redC}[!]${endC} Please install ${yellowC}xclip${endC} to use this tool"
+  echo -e "\n${redC}[!]${endC} Please install ${yellowC}xclip${endC} to use this tool\n"
   exit 0
 fi
 
@@ -37,11 +37,11 @@ helpPanel () {
 	echo -e "\n${redC}[!] Please provide arguments to run the script."
 	echo -e "\n${grayC}[+] Usage: $script_name -t bash -i 10.0.0.1 -p 443"
 	echo -e "\n\t${yellowC}-h\t\t:${endC} ${blueC}Show this help panel${endC}"
-	echo -e "\t${yellowC}-t SHELL\t:${endC} ${blueC}Type of shell: [bash, python, perl, php, netcat, ruby, java]${endC}"
+	echo -e "\t${yellowC}-t SHELL\t:${endC} ${blueC}Type of shell${endC}"
 	echo -e "\t${yellowC}-i IP\t\t:${endC} ${blueC}Specify ip address${endC}"
 	echo -e "\t${yellowC}-p PORT\t\t:${endC} ${blueC}Specify port${endC}"
 	echo -e "\t${yellowC}-e\t\t:${endC} ${blueC}Base64 encode${endC}"
-	echo -e "\t${yellowC}-q\t\t:${endC} ${blueC}Hide banner${endC}"
+	echo -e "\t${yellowC}-q\t\t:${endC} ${blueC}Hide banner${endC}\n"
 }
 	
 parameter_counter=0 
