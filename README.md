@@ -2,7 +2,7 @@
     <img
       alt="rshellz"
       src="https://github.com/Brsalcedom/rshellz/blob/main/assets/banner.png"
-      width="640"
+      width="580"
     />
 </p>
 
@@ -40,12 +40,13 @@ Example: `rshellz -t bash -i 10.0.0.1 -p 443`.
 -t SHELL	: Type of shell
 -i IP		: Local ip address
 -p PORT		: Local port
--e		: Base64 encode
+-e ENCODING	: Encode to base64 / urlencode
 -q		: Hide banner
 ```
 ### Shells  
 
 The following shell types are supported.
+
 - bash
 - perl
 - php
@@ -56,8 +57,15 @@ The following shell types are supported.
 - xterm
 
 ### Encoding
-  
-You can use `-e` to **base64** encode the payload.
+
+There are two encoding formats available at the moment.
+
+- base64
+- urlencode
+
+You can use `-e` flag to specify the encoding.
 
 ![B64 Encode](assets/b64-encode.png)
+
+![URL Encode](assets/url-encode.png)
   
